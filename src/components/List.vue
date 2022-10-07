@@ -7,8 +7,10 @@
       <span>Value</span>
     </div>
     <li v-for="cost in list" :key="cost.id" class="costs-list__item">
-      <span v-for="(item, idx) in cost" :key="idx" class="row">{{ item }}</span>
+      <span v-for="(item, idx) in cost" :key="idx" class="row">{{ item }} </span
+      ><span class="dot" @click="callContextMenu($event, cost)" >&#10247;</span> <!-- $event - для определения координат трех точек -->
     </li>
+    <ContextMenu></ContextMenu>
   </ul>
 
   <!-- <table class="costs-list">
@@ -48,16 +50,32 @@
 </template>
 
 <script>
+import ContextMenu from "./ContextMenu.vue";
+
 export default {
   name: "List",
+  components: {
+    ContextMenu,
+  },
 
   mounted() {
-    this.$store.dispatch("loadCosts");
+    this.$store.dispatch("loadCosts", +this.$route.query.page);
+    this.$context.EventEmitter.$on("show", this.show);
+    // this.$context.EventEmitter.$on("hide", this.hide);
+  
   },
 
   computed: {
     list() {
       return this.$store.getters.getPaginatedData;
+    },
+  },
+
+  methods: {
+    //costId = @click="callContextMenu(cost.id)
+    callContextMenu(event, cost) {
+      this.$context.show(event.currentTarget, cost); // event.currentTarget для определения текущего элемента, на котором сработал event
+
     },
   },
 };
@@ -97,5 +115,14 @@ export default {
   flex-basis: 25%;
   padding: 8px 16px;
   text-align: center;
+}
+
+.context-menu {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.dot{
+  cursor: pointer;
 }
 </style>

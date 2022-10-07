@@ -39,11 +39,23 @@ export default {
     List,
     Pagination,
   },
-  // methods: {
-  //   onBtnClick() {
-  //     this.$store.commit("setIsPopupActive", !this.$store.state.isPopupActive);
-  //   },
-  // },
+  methods: {
+        show() {
+      this.isShown = true;
+    },
+
+    hide() {
+      this.isShown = false;
+      console.log("hide")
+    },
+    // onBtnClick() {
+    //   this.$store.commit("setIsPopupActive", !this.$store.state.isPopupActive);
+    // },
+  },
+    mounted() {
+    this.$context.EventEmitter.$on("show", this.show);
+    this.$context.EventEmitter.$on("hide", this.hide);
+  },
 };
 </script>
 

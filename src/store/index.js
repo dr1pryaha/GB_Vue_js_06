@@ -42,12 +42,22 @@ export default new Vuex.Store({
     setCostsList: (state, payload) => (state.costsData = payload),
     addCostsList: (state, payload) => state.costsData.push(payload),
     setCurrentPage: (state, payload) => (state.currentPage = payload),
-    // setIsPopupActive: (state, payload) => (state.isPopupActive = payload),
+    removeCostsList: (state, payload) => state.costsData.splice(
+      state.costsData.indexOf(payload),
+      1
+    ),
+    editCostsList: (state, payload) => (state.costsData = state.costsData.map((cost) => {
+      if(cost.id === payload.id){
+        return payload;
+      } else{
+        return cost
+      }
+    }))
   },
 
   // для обмена данными между клиентом-сервером (асинхронных операций)
   actions: {
-    async loadCosts({ commit }) {
+    async loadCosts({ commit }, currentPage) {
       const list = await new Promise((resolve, reject) => {
         setTimeout(() => {
           resolve([
@@ -64,7 +74,8 @@ export default new Vuex.Store({
           ]);
         }, 1000);
       });
-      return commit("setCostsList", list);
+      commit("setCostsList", list);
+      commit("setCurrentPage", currentPage || 1); //currentPage = +this.$route.query.page
     },
   },
 });
